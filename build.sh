@@ -12,16 +12,28 @@ export POLICY
 export PLATFORM
 
 # get docker default multiarch image prefix for PLATFORM
-case "${PLATFORM}" in
-	x86_64) GOARCH="amd64";;
-	i686) GOARCH="386";;
-	aarch64) GOARCH="arm64";;
-	ppc64le) GOARCH="ppc64le";;
-	s390x) GOARCH="s390x";;
-	armv7l) GOARCH="arm/v7";;
-	riscv64) GOARCH="riscv64";;
-	*) echo "Unsupported platform: '${PLATFORM}'"; exit 1;;
-esac
+if [ "${PLATFORM}" == "x86_64" ]; then
+	GOARCH="amd64"
+	MULTIARCH_PREFIX="amd64/"
+elif [ "${PLATFORM}" == "i686" ]; then
+	GOARCH="386"
+	MULTIARCH_PREFIX="i386/"
+elif [ "${PLATFORM}" == "aarch64" ]; then
+	GOARCH="arm64"
+	MULTIARCH_PREFIX="arm64v8/"
+elif [ "${PLATFORM}" == "ppc64le" ]; then
+	GOARCH="ppc64le"
+	MULTIARCH_PREFIX="ppc64le/"
+elif [ "${PLATFORM}" == "s390x" ]; then
+	GOARCH="s390x"
+	MULTIARCH_PREFIX="s390x/"
+elif [ "${PLATFORM}" == "armv7l" ]; then
+	GOARCH="arm/v7"
+	MULTIARCH_PREFIX="arm32v7/"
+else
+	echo "Unsupported platform: '${PLATFORM}'"
+	exit 1
+fi
 
 # setup BASEIMAGE and its specific properties
 if [ "${POLICY}" == "manylinux2014" ]; then
