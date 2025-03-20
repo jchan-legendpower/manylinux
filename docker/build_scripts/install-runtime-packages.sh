@@ -72,6 +72,9 @@ fi
 
 BASE_TOOLS=(autoconf automake bison bzip2 ca-certificates curl diffutils file make patch unzip)
 if [ "${AUDITWHEEL_POLICY}" == "manylinux2014" ]; then
+	if [ "${AUDITWHEEL_ARCH}" == "armv7l" ]; then
+		echo "armhfp" > /etc/yum/vars/basearch
+	fi
 	BASE_TOOLS+=(hardlink hostname which)
 	# See https://unix.stackexchange.com/questions/41784/can-yum-express-a-preference-for-x86-64-over-i386-packages
 	echo "multilib_policy=best" >> /etc/yum.conf
@@ -93,7 +96,7 @@ if [ "${AUDITWHEEL_POLICY}" == "manylinux2014" ]; then
 		yum -y erase bind-license qemu-guest-agent
 	fi
 	fixup-mirrors
-	yum -y update
+	yum --skip-broken -y update
 	fixup-mirrors
 	yum -y install yum-utils curl
 	yum-config-manager --enable extras
